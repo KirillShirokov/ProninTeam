@@ -1,15 +1,17 @@
 from django.contrib import admin
 
-from .models import Payment
+from payments.models import Payment
 
 
+@admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
+
     list_display = (
-        'pk',
+        'id',
         'donor',
         'collect',
         'amount',
-        'pub_date',
+        'created_at',
     )
     list_display_links = (
         'donor',
@@ -20,6 +22,3 @@ class PaymentAdmin(admin.ModelAdmin):
     list_filter = (
         'donor',
     )
-
-
-admin.site.register(Payment, PaymentAdmin)

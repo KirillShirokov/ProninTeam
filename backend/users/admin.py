@@ -1,11 +1,12 @@
 from django.contrib import admin
 
-from .models import User
+from users.models import User
 
 
+@admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
+        'id',
         'email',
         'username',
         'first_name',
@@ -21,6 +22,3 @@ class UserAdmin(admin.ModelAdmin):
     list_filter = (
         'username',
     )
-
-
-admin.site.register(User, UserAdmin)

@@ -8,9 +8,9 @@ from core.constants import (
     MAX_LENGTH_DESCRIPTION_COLLECT,
     MAX_DECIMAL_DIGITS,
     MAX_DECIMAL_PLACES,
-    MIN_VALUE_VALIDATOR    
+    MIN_VALUE_VALIDATOR
 )
-from core.mixins import ChangeDateMixin, PublishDateMixin
+from core.mixins import CreatedUpdatedDateModelMixin
 from users.models import User
 
 
@@ -36,7 +36,7 @@ class Goal(models.Model):
         return self.name
 
 
-class Collect(models.Model, ChangeDateMixin, PublishDateMixin):
+class Collect(CreatedUpdatedDateModelMixin):
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -52,12 +52,14 @@ class Collect(models.Model, ChangeDateMixin, PublishDateMixin):
         Goal,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         verbose_name='Цель сбора средств',
     )
     description = models.TextField(
         verbose_name='Описание',
         max_length=MAX_LENGTH_DESCRIPTION_COLLECT,
-        help_text=f'Максимальная длинна {MAX_LENGTH_DESCRIPTION_COLLECT} символов',
+        help_text='Максимальная длинна'
+                  f'{MAX_LENGTH_DESCRIPTION_COLLECT} символов',
     )
     total_goal = models.DecimalField(
         verbose_name='Необходимая сумма средств сбора',
@@ -83,21 +85,8 @@ class Collect(models.Model, ChangeDateMixin, PublishDateMixin):
         null=True,
         upload_to='images/%Y/%m/%d',
     )
-    completion_date  = models.DateTimeField(
+    completion_date = models.DateTimeField(
         verbose_name='Дата завершения сбора средств',
-        blank=True,
-        null=True,
-    )
-    pub_date = models.DateTimeField(
-        verbose_name='Дата создания сбора',
-        auto_now_add=True,
-        blank=True,
-        null=True,
-    )
-    change_date = models.DateTimeField(
-        verbose_name='Дата изменения',
-        auto_created=True,
-        auto_now=True,
         blank=True,
         null=True,
     )

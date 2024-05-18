@@ -1,19 +1,15 @@
 from django.db import models
 
 
-class PublishDateMixin:
-    pub_date = models.DateTimeField(
-        verbose_name='Дата создания',
+class CreatedUpdatedDateModelMixin(models.Model):
+    created_at = models.DateTimeField(
+        'Дата добавления',
         auto_now_add=True,
-        blank=True,
-        null=True,
+    )
+    updated_at = models.DateTimeField(
+        'Дата изменения',
+        auto_now=True,
     )
 
-class ChangeDateMixin:
-    change_date = models.DateTimeField(
-        verbose_name='Дата изменения',
-        auto_created=True,
-        auto_now=True,
-        blank=True,
-        null=True,
-    )
+    class Meta:
+        abstract = True

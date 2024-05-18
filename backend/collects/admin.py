@@ -3,9 +3,10 @@ from django.contrib import admin
 from .models import Collect, Goal
 
 
+@admin.register(Goal)
 class GoalAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
+        'id',
         'name',
         'slug',
     )
@@ -20,9 +21,10 @@ class GoalAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(Collect)
 class CollectAdmin(admin.ModelAdmin):
     list_display = (
-        'pk',
+        'id',
         'author',
         'name',
         'goal',
@@ -31,9 +33,8 @@ class CollectAdmin(admin.ModelAdmin):
         'is_limited',
         'image',
         'completion_date',
-        'pub_date',
-        'change_date',
-
+        'created_at',
+        'updated_at',
     )
     list_display_links = (
         'name',
@@ -44,6 +45,3 @@ class CollectAdmin(admin.ModelAdmin):
     list_filter = (
         'name',
     )
-
-admin.site.register(Goal, GoalAdmin)
-admin.site.register(Collect, CollectAdmin)

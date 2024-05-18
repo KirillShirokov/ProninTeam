@@ -20,8 +20,6 @@ class User(AbstractUser):
     email = models.EmailField(
         max_length=MAX_LENGTH_EMAIL_USER,
         unique=True,
-        blank=False,
-        null=False,
         help_text=f'Максимальная длинна {MAX_LENGTH_EMAIL_USER} символов',
     )
     username = models.CharField(
@@ -53,4 +51,3 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-    
