@@ -27,7 +27,6 @@ class CollectAdmin(admin.ModelAdmin):
         'id',
         'author',
         'name',
-        'goal',
         'description',
         'total_goal',
         'is_limited',

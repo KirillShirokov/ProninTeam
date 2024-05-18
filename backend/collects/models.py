@@ -48,10 +48,8 @@ class Collect(CreatedUpdatedDateModelMixin):
         max_length=MAX_LENGTH_NAME_COLLECT,
         help_text=f'Максимальная длинна {MAX_LENGTH_NAME_COLLECT} символов',
     )
-    goal = models.ForeignKey(
+    goal = models.ManyToManyField(
         Goal,
-        on_delete=models.SET_NULL,
-        null=True,
         blank=True,
         verbose_name='Цель сбора средств',
     )

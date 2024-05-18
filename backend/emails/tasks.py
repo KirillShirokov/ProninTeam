@@ -1,7 +1,7 @@
 from celery import shared_task
 from django.core.mail import send_mail
 
-from services import collect_created_email, payment_created_email
+from emails.services import collect_created_email, payment_created_email
 
 
 @shared_task

@@ -25,6 +25,14 @@ class CollectReadSerializer(serializers.ModelSerializer):
     total_amount = serializers.SerializerMethodField()
     donors_count = serializers.SerializerMethodField()
 
+    @staticmethod
+    def get_total_amount(instance):
+        return instance.total_amount
+
+    @staticmethod
+    def get_donors_count(instance):
+        return instance.donors_count
+
     class Meta:
         model = Collect
         fields = (
@@ -69,14 +77,14 @@ class CollectWriteSerializer(serializers.ModelSerializer):
 
     @atomic
     def create(self, validate_data):
-        goal = validate_data.pop('goal')
+        goal = validate_data.pop('goal', [])
         collect = Collect.objects.create(**validate_data)
         collect.goal.set(goal)
         send_email_collect_create_task.delay(collect.id)
         return collect
 
     def update(self, collect, validate_data):
-        goal = validate_data.pop('goal')
+        goal = validate_data.pop('goal', [])
         collect = super().update(collect, validate_data)
         collect.goal.set(goal)
         return collect

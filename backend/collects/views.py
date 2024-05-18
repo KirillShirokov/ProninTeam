@@ -4,7 +4,6 @@ from rest_framework import viewsets
 
 from collects.serializers import CollectReadSerializer, CollectWriteSerializer
 from collects.models import Collect
-from core.permissions import IsAdminOrAuthorOrReadOnly
 
 
 class CollectsViewSet(viewsets.ModelViewSet):
@@ -16,7 +15,6 @@ class CollectsViewSet(viewsets.ModelViewSet):
         donors_count=Count('payments__id', distinct=True),
     )
     pagination_class = LimitOffsetPagination
-    permission_classes = (IsAdminOrAuthorOrReadOnly)
 
     def get_serializer_class(self):
         """Определяет класс сериализатора в зависимости от типа запроса."""
