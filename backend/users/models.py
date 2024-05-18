@@ -1,11 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from core.constants import (MAX_LENGTH_EMAIL_USER,
-                           MAX_LENGTH_FIRST_NAME_USER,
-                           MAX_LENGTH_LAST_NAME_USER,
-                           MAX_LENGTH_PATRONYMIC_USER,
-                           MAX_LENGTH_USERNAME_USER,)
+from core.constants import (
+    MAX_LENGTH_EMAIL_USER,
+    MAX_LENGTH_FIRST_NAME_USER,
+    MAX_LENGTH_LAST_NAME_USER,
+    MAX_LENGTH_PATRONYMIC_USER,
+    MAX_LENGTH_USERNAME_USER
+)
 
 
 class User(AbstractUser):
@@ -13,36 +15,35 @@ class User(AbstractUser):
     REQUIRED_FIELDS = [
         'username',
         'first_name',
-        'last_name',
-        'patronymic',
     ]
 
     email = models.EmailField(
         max_length=MAX_LENGTH_EMAIL_USER,
         unique=True,
         blank=False,
-        null=False
+        null=False,
+        help_text=f'Максимальная длинна {MAX_LENGTH_EMAIL_USER} символов',
     )
     username = models.CharField(
         max_length=MAX_LENGTH_USERNAME_USER,
         unique=True,
-        blank=False,
-        null=False
+        help_text=f'Максимальная длинна {MAX_LENGTH_USERNAME_USER} символов',
     )
     first_name = models.CharField(
         max_length=MAX_LENGTH_FIRST_NAME_USER,
-        blank=False,
-        null=False
+        help_text=f'Максимальная длинна {MAX_LENGTH_FIRST_NAME_USER} символов',
     )
     last_name = models.CharField(
         max_length=MAX_LENGTH_LAST_NAME_USER,
-        blank=False,
-        null=False
+        blank=True,
+        null=True,
+        help_text=f'Максимальная длинна {MAX_LENGTH_LAST_NAME_USER} символов',
     )
     patronymic = models.CharField(
         max_length=MAX_LENGTH_PATRONYMIC_USER,
-        blank=False,
-        null=False
+        blank=True,
+        null=True,
+        help_text=f'Максимальная длинна {MAX_LENGTH_PATRONYMIC_USER} символов',
     )
 
     class Meta:

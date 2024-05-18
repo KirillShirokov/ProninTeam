@@ -12,3 +12,10 @@ MAX_LENGTH_SLUG_GOAL = 150
 """Константы модели сбора (Collect)."""
 MAX_LENGTH_NAME_COLLECT = 250
 MAX_LENGTH_DESCRIPTION_COLLECT = 500
+
+"""Константы децимального поля"""
+MAX_DECIMAL_DIGITS = 10
+MAX_DECIMAL_PLACES = 2
+
+"""Константы валидатора минимума"""
+MIN_VALUE_VALIDATOR = 1.00

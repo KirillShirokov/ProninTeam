@@ -1,9 +1,16 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
-from core.constants import (MAX_LENGTH_NAME_GOAL,
-                            MAX_LENGTH_SLUG_GOAL,
-                            MAX_LENGTH_NAME_COLLECT,
-                            MAX_LENGTH_DESCRIPTION_COLLECT)
+from core.constants import (
+    MAX_LENGTH_NAME_GOAL,
+    MAX_LENGTH_SLUG_GOAL,
+    MAX_LENGTH_NAME_COLLECT,
+    MAX_LENGTH_DESCRIPTION_COLLECT,
+    MAX_DECIMAL_DIGITS,
+    MAX_DECIMAL_PLACES,
+    MIN_VALUE_VALIDATOR    
+)
+from core.mixins import ChangeDateMixin, PublishDateMixin
 from users.models import User
 
 
@@ -12,13 +19,13 @@ class Goal(models.Model):
         verbose_name='Название',
         max_length=MAX_LENGTH_NAME_GOAL,
         unique=True,
-        help_text='Максимальная длинна 200 символов',
+        help_text=f'Максимальная длинна {MAX_LENGTH_NAME_GOAL} символов',
     )
     slug = models.SlugField(
         verbose_name='Уникальный слаг',
         max_length=MAX_LENGTH_SLUG_GOAL,
         unique=True,
-        help_text='Максимальная длинна 200 символов',
+        help_text=f'Максимальная длинна {MAX_LENGTH_SLUG_GOAL} символов',
     )
 
     class Meta:
@@ -29,32 +36,46 @@ class Goal(models.Model):
         return self.name
 
 
-class Collect(models.Model):
+class Collect(models.Model, ChangeDateMixin, PublishDateMixin):
     author = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name='Автор сбора средств',
     )
     name = models.CharField(
         verbose_name='Название',
         max_length=MAX_LENGTH_NAME_COLLECT,
+        help_text=f'Максимальная длинна {MAX_LENGTH_NAME_COLLECT} символов',
     )
-    goal = models.ManyToManyField(
+    goal = models.ForeignKey(
         Goal,
+        on_delete=models.SET_NULL,
+        null=True,
         verbose_name='Цель сбора средств',
     )
     description = models.TextField(
         verbose_name='Описание',
         max_length=MAX_LENGTH_DESCRIPTION_COLLECT,
+        help_text=f'Максимальная длинна {MAX_LENGTH_DESCRIPTION_COLLECT} символов',
     )
-    total_goal = models.PositiveIntegerField(
-        verbose_name='Необходимая сумма средств сбора'
+    total_goal = models.DecimalField(
+        verbose_name='Необходимая сумма средств сбора',
+        max_digits=MAX_DECIMAL_DIGITS,
+        decimal_places=MAX_DECIMAL_PLACES,
+        default=None,
+        validators=(
+            MinValueValidator(
+                MIN_VALUE_VALIDATOR,
+                message=(
+                    f'Введите значение больше {MIN_VALUE_VALIDATOR}.'
+                )
+            ),
+        ),
     )
-    amount_collected = models.PositiveIntegerField(
-        verbose_name='Собранная сумма средств'
-    )
-    quantity_donors = models.PositiveIntegerField(
-        verbose_name='Количество участников'
+    is_limited = models.BooleanField(
+        verbose_name='Сбор ограничен/не ограничен',
+        default=True,
     )
     image = models.ImageField(
         verbose_name='Обложка сбора',
@@ -62,11 +83,21 @@ class Collect(models.Model):
         null=True,
         upload_to='images/%Y/%m/%d',
     )
-    completion_date = pub_date = models.DateTimeField(
-        auto_now_add=True,
-    )    
-    pub_date = models.DateTimeField(
+    completion_date  = models.DateTimeField(
         verbose_name='Дата завершения сбора средств',
+        blank=True,
+        null=True,
+    )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата создания сбора',
+        auto_now_add=True,
+        blank=True,
+        null=True,
+    )
+    change_date = models.DateTimeField(
+        verbose_name='Дата изменения',
+        auto_created=True,
+        auto_now=True,
         blank=True,
         null=True,
     )
@@ -74,7 +105,7 @@ class Collect(models.Model):
     class Meta:
         verbose_name = 'Сбор средств'
         verbose_name_plural = 'Сборы средств'
-        ordering = ('-pub_date',)
+        ordering = ('-completion_date',)
 
     def __str__(self):
         return self.name

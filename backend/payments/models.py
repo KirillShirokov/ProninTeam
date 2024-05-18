@@ -1,26 +1,49 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
+
+from core.constants import (
+    MAX_DECIMAL_DIGITS,
+    MAX_DECIMAL_PLACES,
+    MIN_VALUE_VALIDATOR    
+)
 from collects.models import Collect
+from core.mixins import PublishDateMixin
 from users.models import User
 
 
-class Payment(models.Model):
+class Payment(models.Model, PublishDateMixin):
     donor = models.ForeignKey(
         User,
         verbose_name='Произвел пожертвование',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
     )
     collect = models.ForeignKey(
         Collect,
         verbose_name='Сбор',
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
     )
-    amount = models.PositiveIntegerField(
+    amount = models.DecimalField(
         verbose_name='Сумма пожертвования',
+        max_digits=MAX_DECIMAL_DIGITS,
+        decimal_places=MAX_DECIMAL_PLACES,
+        default=None,
+        validators=(
+            MinValueValidator(
+                MIN_VALUE_VALIDATOR,
+                message=(
+                    f'Введите значение больше {MIN_VALUE_VALIDATOR}.'
+                )
+            ),
+        ),
     )
-    date_donate = models.DateTimeField(
-        verbose_name='Дата пожертвования',
-        auto_created=True,
+    pub_date = models.DateTimeField(
+        verbose_name='Дата платежа',
+        auto_now_add=True,
+        blank=True,
+        null=True,
     )
 
     class Meta:
@@ -28,4 +51,4 @@ class Payment(models.Model):
         verbose_name_plural = 'Пожертвовавшие'
 
     def __str__(self) -> str:
-        return self.name
+        return f'{self.donor} - {self.amount} - {self.pub_date}'
